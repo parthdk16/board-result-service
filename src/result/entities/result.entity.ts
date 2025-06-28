@@ -8,6 +8,15 @@ import {
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 
+export enum BoardType {
+  CBSE = 'CBSE', // Only one board type retained
+}
+
+export enum ClassGrade {
+  GRADE_10 = '10',
+  GRADE_12 = '12',
+}
+
 export enum ResultStatus {
   PASS = 'PASS',
   FAIL = 'FAIL',
@@ -15,86 +24,76 @@ export enum ResultStatus {
   PENDING = 'PENDING',
 }
 
-export enum BoardType {
-  CBSE = 'CBSE',
-  ICSE = 'ICSE',
-  STATE_BOARD = 'STATE_BOARD',
-  IGCSE = 'IGCSE',
-  IB = 'IB',
-}
-
-export enum ClassGrade {
-  TEN = '10',
-  TWELVE = '12',
-  DIPLOMA = 'DIPLOMA',
-  UNDERGRADUATE = 'UNDERGRADUATE',
-  POSTGRADUATE = 'POSTGRADUATE',
-}
-
-export interface SubjectMark {
-  total: number;
-  obtained: number;
-  grade?: string;
-  remarks?: string;
-}
-
-export interface SubjectMarks {
-  [subjectName: string]: SubjectMark;
-}
-
 @Entity('results')
-@Index(['studentId', 'boardType', 'classGrade', 'academicYear', 'rollNumber'], {
+@Index(['studentId', 'boardType', 'classGrade', 'academicYear'], {
   unique: true,
 })
+@Index(['rollNumber', 'boardType', 'academicYear'])
+@Index(['isPublished'])
+@Index(['resultStatus'])
 export class Result {
   @ApiProperty({ description: 'Unique identifier for the result' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ApiProperty({ description: 'Student ID from user service' })
+  @ApiProperty({ description: 'Student ID reference' })
   @Column({ name: 'student_id' })
   @Index()
   studentId: string;
 
-  @ApiProperty({ enum: BoardType, description: 'Type of educational board' })
+  @ApiProperty({ description: 'Student name' })
+  @Column({ name: 'student_name' })
+  studentName: string;
+
+  @ApiProperty({ description: 'Student roll number' })
+  @Column({ name: 'roll_number' })
+  rollNumber: string;
+
+  @ApiProperty({ enum: BoardType, description: 'Board type' })
   @Column({
     type: 'enum',
     enum: BoardType,
     name: 'board_type',
   })
-  @Index()
   boardType: BoardType;
 
-  @ApiProperty({ enum: ClassGrade, description: 'Class or grade level' })
+  @ApiProperty({ enum: ClassGrade, description: 'Class/Grade' })
   @Column({
     type: 'enum',
     enum: ClassGrade,
     name: 'class_grade',
   })
-  @Index()
   classGrade: ClassGrade;
 
-  @ApiProperty({ description: 'Academic year (e.g., 2023-2024)' })
-  @Column({ name: 'academic_year', length: 9 })
-  @Index()
+  @ApiProperty({ description: 'Academic year (e.g., 2023-24)' })
+  @Column({ name: 'academic_year' })
   academicYear: string;
 
-  @ApiProperty({ description: 'Student roll number' })
-  @Column({ name: 'roll_number', length: 50 })
-  @Index()
-  rollNumber: string;
+  @ApiProperty({ description: 'Subject-wise marks', type: 'object' })
+  @Column({ type: 'jsonb', name: 'subject_marks', nullable: true })
+  subjectMarks: Record<string, number>;
 
-  @ApiProperty({ description: 'Registration number', required: false })
-  @Column({ name: 'registration_number', length: 50, nullable: true })
-  registrationNumber?: string;
+  @ApiProperty({ description: 'Total marks' })
+  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'total_marks' })
+  totalMarks: number;
 
-  @ApiProperty({ description: 'School code', required: false })
-  @Column({ name: 'school_code', length: 20, nullable: true })
-  schoolCode?: string;
+  @ApiProperty({ description: 'Obtained marks' })
+  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'obtained_marks' })
+  obtainedMarks: number;
 
-  @ApiProperty({ description: 'School name', required: false })
-  @Column({ name: 'school_name', length: 255, nullable: true })
-  schoolName?: string;
+  @ApiProperty({ description: 'Percentage scored' })
+  @Column({
+    type: 'decimal',
+    precision: 5,
+    scale: 2,
+    name: 'percentage',
+    nullable: true,
+  })
+  percentage: number;
+
+  @ApiProperty({ description: 'Overall grade' })
+  @Column({ name: 'overall_grade', nullable: true })
+  overallGrade: string;
 
   @ApiProperty({ enum: ResultStatus, description: 'Result status' })
   @Column({
@@ -103,51 +102,27 @@ export class Result {
     name: 'result_status',
     default: ResultStatus.PENDING,
   })
-  @Index()
   resultStatus: ResultStatus;
 
-  @ApiProperty({ description: 'Total marks', required: false })
-  @Column({ name: 'total_marks', nullable: true })
-  totalMarks?: number;
+  @ApiProperty({ description: 'Additional remarks' })
+  @Column({ nullable: true })
+  remarks: string;
 
-  @ApiProperty({ description: 'Obtained marks', required: false })
-  @Column({ name: 'obtained_marks', nullable: true })
-  obtainedMarks?: number;
-
-  @ApiProperty({ description: 'Percentage', required: false })
-  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
-  percentage?: number;
-
-  @ApiProperty({ description: 'Grade (A+, A, B+, etc.)', required: false })
-  @Column({ length: 5, nullable: true })
-  grade?: string;
-
-  @ApiProperty({
-    description: 'Division (First, Second, Third)',
-    required: false,
-  })
-  @Column({ length: 20, nullable: true })
-  division?: string;
-
-  @ApiProperty({ description: 'Subject-wise marks in JSON format' })
-  @Column({ type: 'jsonb', name: 'subject_marks', nullable: true })
-  subjectMarks?: SubjectMarks;
-
-  @ApiProperty({ description: 'Result publication timestamp', required: false })
-  @Column({ name: 'published_at', nullable: true })
-  publishedAt?: Date;
-
-  @ApiProperty({
-    description: 'ID of admin who published the result',
-    required: false,
-  })
-  @Column({ name: 'published_by', nullable: true })
-  publishedBy?: string;
-
-  @ApiProperty({ description: 'Whether the result is published' })
+  @ApiProperty({ description: 'Whether result is published' })
   @Column({ name: 'is_published', default: false })
-  @Index()
   isPublished: boolean;
+
+  @ApiProperty({ description: 'When result was published' })
+  @Column({ name: 'published_at', type: 'timestamp', nullable: true })
+  publishedAt: Date;
+
+  @ApiProperty({ description: 'Who published the result' })
+  @Column({ name: 'published_by', nullable: true })
+  publishedBy: string;
+
+  @ApiProperty({ description: 'Who created the result' })
+  @Column({ name: 'created_by' })
+  createdBy: string;
 
   @ApiProperty({ description: 'Creation timestamp' })
   @CreateDateColumn({ name: 'created_at' })
