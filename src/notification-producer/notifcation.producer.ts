@@ -48,7 +48,6 @@ export class NotificationProducer {
 
       this.connection = await amqp.connect(this.rabbitmqUrl);
       this.channel = await this.connection.createChannel();
-      
       // Declare the queue
       await this.channel.assertQueue(this.queueName, {
         durable: true,

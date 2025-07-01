@@ -35,7 +35,7 @@ export class UserClientService {
         this.httpService
           .get(`${this.userServiceUrl}/users/${userId}`, {
             headers: {
-              'Authorization': `Bearer ${this.apiKey}`,
+              Authorization: `Bearer ${this.apiKey}`,
               'Content-Type': 'application/json',
             },
             timeout: 5000,
@@ -43,12 +43,15 @@ export class UserClientService {
           .pipe(
             timeout(5000),
             catchError((error) => {
-              this.logger.error(`Error validating user ${userId}:`, error.message);
+              this.logger.error(
+                `Error validating user ${userId}:`,
+                error.message,
+              );
               throw new HttpException(
                 'Failed to validate user',
                 HttpStatus.SERVICE_UNAVAILABLE,
               );
-            })
+            }),
           ),
       );
 
@@ -99,7 +102,7 @@ export class UserClientService {
             { userIds },
             {
               headers: {
-                'Authorization': `Bearer ${this.apiKey}`,
+                Authorization: `Bearer ${this.apiKey}`,
                 'Content-Type': 'application/json',
               },
               timeout: 10000,
@@ -113,8 +116,8 @@ export class UserClientService {
                 'Failed to fetch users',
                 HttpStatus.SERVICE_UNAVAILABLE,
               );
-            })
-          )
+            }),
+          ),
       );
 
       return response.data;
