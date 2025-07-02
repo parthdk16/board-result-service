@@ -74,8 +74,8 @@ export class StreamController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.streamService.remove(id);
+    return BaseResponseDto.success('Stream deleted successfully');
   }
 }

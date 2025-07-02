@@ -101,6 +101,21 @@ export class AcademicYearController {
     );
   }
 
+  @Patch('/year/:yearLabel')
+  async updateWithYearLabel(
+    @Param('yearLabel') yearLabel: string,
+    @Body(ValidationPipe) updateAcademicYearDto: UpdateAcademicYearDto,
+  ) {
+    const academicYear = await this.academicYearService.updateWithYearLabel(
+      yearLabel,
+      updateAcademicYearDto,
+    );
+    return BaseResponseDto.success(
+      'Academic year updated successfully',
+      academicYear,
+    );
+  }
+
   @Patch(':id/set-current')
   async setCurrentAcademicYear(@Param('id', ParseUUIDPipe) id: string) {
     await this.academicYearService.setCurrentAcademicYear(id);
@@ -108,8 +123,8 @@ export class AcademicYearController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.academicYearService.remove(id);
+    return BaseResponseDto.success('Academic year deleted successfully');
   }
 }

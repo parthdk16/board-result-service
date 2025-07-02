@@ -79,6 +79,12 @@ export class SubjectController {
     return BaseResponseDto.success('Subject retrieved successfully', subject);
   }
 
+  @Get('name/:name')
+  async findByName(@Param('name') name: string) {
+    const subject = await this.subjectService.findByName(name);
+    return BaseResponseDto.success('Subject retrieved successfully', subject);
+  }
+
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
@@ -89,8 +95,8 @@ export class SubjectController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.subjectService.remove(id);
+    return BaseResponseDto.success('Subject deleted successfully');
   }
 }

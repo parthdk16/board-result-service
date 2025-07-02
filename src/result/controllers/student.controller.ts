@@ -71,8 +71,8 @@ export class StudentController {
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     await this.studentService.remove(id);
+    return BaseResponseDto.success('Student deleted successfully');
   }
 }

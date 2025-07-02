@@ -86,11 +86,42 @@ export class AcademicYearService {
     return academicYear;
   }
 
+  async updateWithYearLabel(
+    yearLabel: string,
+    updateAcademicYearDto: UpdateAcademicYearDto,
+  ): Promise<AcademicYear> {
+    const payload: Partial<AcademicYear> = {
+      ...updateAcademicYearDto,
+      startDate: updateAcademicYearDto.startDate
+        ? typeof updateAcademicYearDto.startDate === 'string'
+          ? new Date(updateAcademicYearDto.startDate)
+          : updateAcademicYearDto.startDate
+        : undefined,
+      endDate: updateAcademicYearDto.endDate
+        ? typeof updateAcademicYearDto.endDate === 'string'
+          ? new Date(updateAcademicYearDto.endDate)
+          : updateAcademicYearDto.endDate
+        : undefined,
+    };
+
+    const academicYear = await this.academicYearRepository.updateWithYearLabel(
+      yearLabel,
+      payload,
+    );
+    if (!academicYear) {
+      throw new NotFoundException(
+        `Academic year with label ${yearLabel} not found`,
+      );
+    }
+    return academicYear;
+  }
+
   async remove(id: string): Promise<void> {
     const deleted = await this.academicYearRepository.delete(id);
     if (!deleted) {
       throw new NotFoundException(`Academic year with ID ${id} not found`);
     }
+    return;
   }
 
   async findAllActive(): Promise<AcademicYear[]> {

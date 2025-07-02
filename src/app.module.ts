@@ -6,6 +6,7 @@ import { StudentModule } from './result/modules/student.module';
 import { StreamModule } from './result/modules/stream.module';
 import { AcademicYearModule } from './result/modules/academic-year.module';
 import { SubjectModule } from './result/modules/subject.module';
+import { ClassLevelModule } from './result/modules/class-level.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { SubjectModule } from './result/modules/subject.module';
     StreamModule,
     AcademicYearModule,
     SubjectModule,
+    ClassLevelModule,
   ],
 })
 export class AppModule {}

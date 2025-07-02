@@ -70,8 +70,9 @@ export class AcademicYearRepository {
     }
 
     queryBuilder
-      .skip(pagination.skip)
-      .take(pagination.limit)
+      // .skip(pagination.skip)
+      .offset(pagination.skip)
+      .limit(pagination.limit)
       .orderBy('academicYear.startDate', 'DESC');
 
     return await queryBuilder.getManyAndCount();
@@ -83,6 +84,23 @@ export class AcademicYearRepository {
   ): Promise<AcademicYear | null> {
     await this.repository.update(id, updateData);
     return this.findById(id);
+  }
+
+  async updateWithYearLabel(
+    yearLabel: string,
+    updateData: Partial<AcademicYear>,
+  ): Promise<AcademicYear | null> {
+    await this.repository
+      .createQueryBuilder()
+      .update(AcademicYear)
+      .set({
+        ...updateData,
+        updatedAt: new Date(),
+      })
+      .where('yearLabel = :yearLabel', { yearLabel })
+      .execute();
+
+    return this.findByYearLabel(yearLabel);
   }
 
   async delete(id: string): Promise<boolean> {
@@ -100,7 +118,11 @@ export class AcademicYearRepository {
   async setCurrentAcademicYear(id: string): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
       // First, set all academic years to not current
-      await manager.update(AcademicYear, {}, { isCurrent: false });
+      await manager.update(
+        AcademicYear,
+        { isCurrent: true },
+        { isCurrent: false },
+      );
       // Then set the specified one as current
       await manager.update(AcademicYear, { id }, { isCurrent: true });
     });

@@ -47,6 +47,14 @@ export class SubjectService {
     return subject;
   }
 
+  async findByName(name: string): Promise<Subject> {
+    const subject = await this.subjectRepository.findByName(name);
+    if (!subject) {
+      throw new NotFoundException(`Subject with name ${name} not found`);
+    }
+    return subject;
+  }
+
   async update(
     id: string,
     updateSubjectDto: UpdateSubjectDto,

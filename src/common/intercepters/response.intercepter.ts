@@ -29,7 +29,9 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
       map((data) => {
         const statusCode = response.statusCode;
         const message =
-          statusCode === 200 ? 'Request successful' : 'Request failed';
+          statusCode >= 200 && statusCode <= 299
+            ? 'Request successful'
+            : 'Request failed';
         const timestamp = new Date().toISOString();
 
         return {

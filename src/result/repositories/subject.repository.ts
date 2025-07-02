@@ -32,6 +32,14 @@ export class SubjectRepository {
     });
   }
 
+  async findByName(name: string): Promise<Subject | null> {
+    return await this.repository
+      .createQueryBuilder('subject')
+      // .leftJoinAndSelect('subject.academicYearSubjects', 'academicYearSubjects')
+      .where('subject.name ILIKE :name', { name })
+      .getOne();
+  }
+
   async findAll(
     pagination: PaginationDto,
     filters?: Partial<Subject>,
