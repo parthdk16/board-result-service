@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { BoardType } from '../entities/result.entity';
+import { BoardType } from '../entities_old/result.entity';
 
 export class SubjectMarks {
   @ApiProperty({ description: 'Subject name' })

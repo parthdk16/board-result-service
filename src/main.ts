@@ -54,7 +54,9 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3002;
   await app.listen(port);
-  logger.log(`🚀 Result Microservice is running on: http://localhost:${port}`);
+  logger.log(
+    `🚀 Result Microservice is running on: http://localhost:${port}/v1`,
+  );
   logger.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }
 bootstrap();

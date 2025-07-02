@@ -2,7 +2,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Result } from '../result/entities/result.entity';
+import { Result } from '../result/entities_old/result.entity';
 
 @Module({
   imports: [
@@ -17,9 +17,13 @@ import { Result } from '../result/entities/result.entity';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
         entities: [Result],
-        synchronize: configService.get('NODE_ENV') === 'development',
+        // synchronize: configService.get('NODE_ENV') === 'development',
+        synchronize: false,
         logging: configService.get('NODE_ENV') === 'development',
-        ssl: configService.get('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
+        ssl:
+          configService.get('NODE_ENV') === 'production'
+            ? { rejectUnauthorized: false }
+            : false,
         retryAttempts: 3,
         retryDelay: 3000,
         autoLoadEntities: true,

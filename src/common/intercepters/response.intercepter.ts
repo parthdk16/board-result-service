@@ -1,3 +1,4 @@
+// response.intercepter.ts
 import {
   Injectable,
   NestInterceptor,
@@ -17,14 +18,18 @@ export interface Response<T> {
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
-  intercept(context: ExecutionContext, next: CallHandler<T>): Observable<Response<T>> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler<T>,
+  ): Observable<Response<T>> {
     const request = context.switchToHttp().getRequest();
     const response = context.switchToHttp().getResponse();
 
     return next.handle().pipe(
       map((data) => {
         const statusCode = response.statusCode;
-        const message = statusCode === 200 ? 'Request successful' : 'Request failed';
+        const message =
+          statusCode === 200 ? 'Request successful' : 'Request failed';
         const timestamp = new Date().toISOString();
 
         return {

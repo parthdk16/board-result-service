@@ -71,6 +71,7 @@ export class ExaminationRepository {
 
   async delete(id: string): Promise<boolean> {
     const result = await this.repository.delete(id);
-    return result.affected > 0;
+    // return result.affected > 0;
+    return (result.affected ?? 0) > 0;
   }
 }

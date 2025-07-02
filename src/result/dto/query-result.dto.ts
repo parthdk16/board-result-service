@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { BoardType, ResultStatus } from '../entities/result.entity';
+import { BoardType, ResultStatus } from '../entities_old/result.entity';
 
 export class QueryResultDto {
   @ApiPropertyOptional({

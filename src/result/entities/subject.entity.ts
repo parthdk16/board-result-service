@@ -1,13 +1,13 @@
-// entities/subject.entity.ts
+// src/database/entities/subject.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Result } from './result.entity';
+import { AcademicYearSubject } from './academic-year-subject.entity';
 
 @Entity('subjects')
 export class Subject {
@@ -17,27 +17,29 @@ export class Subject {
   @Column({ type: 'varchar', length: 100 })
   name: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 20, unique: true })
   code: string;
 
-  @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
-  marks: number;
+  @Column({
+    type: 'varchar',
+    length: 50,
+    default: 'CORE',
+    name: 'subject_type',
+  })
+  subjectType: string;
 
-  @Column({ type: 'decimal', precision: 5, scale: 2, default: 100 })
-  totalMarks: number;
+  @Column({ type: 'text', nullable: true })
+  description: string;
 
-  @Column({ type: 'varchar', length: 5 })
-  grade: string;
+  @Column({ type: 'boolean', default: true, name: 'is_active' })
+  isActive: boolean;
 
-  @Column({ type: 'enum', enum: ['PASS', 'FAIL'], default: 'PASS' })
-  status: string;
-
-  @ManyToOne(() => Result, (result) => result.subjects, { onDelete: 'CASCADE' })
-  result: Result;
-
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz', name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => AcademicYearSubject, (aySubject) => aySubject.subject)
+  academicYearSubjects: AcademicYearSubject[];
 }

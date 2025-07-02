@@ -87,14 +87,17 @@ export class StudentResultRepository {
     return await queryBuilder.getManyAndCount();
   }
 
-  async update(id: string, updateData: Partial<StudentResult>): Promise<StudentResult | null> {
+  async update(
+    id: string,
+    updateData: Partial<StudentResult>,
+  ): Promise<StudentResult | null> {
     await this.repository.update(id, updateData);
     return this.findById(id);
   }
 
   async delete(id: string): Promise<boolean> {
     const result = await this.repository.delete(id);
-    return result.affected > 0;
+    return (result.affected ?? 0) > 0;
   }
 
   async findByExamination(examinationId: string): Promise<StudentResult[]> {
@@ -110,7 +113,7 @@ export class StudentResultRepository {
       where: { examination: { id: examinationId } },
     });
 
-    const publishedResults = results.map(result => ({
+    const publishedResults = results.map((result) => ({
       ...result,
       isPublished: true,
       publishedAt: new Date(),

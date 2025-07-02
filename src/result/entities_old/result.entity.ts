@@ -69,7 +69,11 @@ export class Result {
   @Column({ name: 'academic_year' })
   academicYear: string;
 
-  @ApiProperty({ description: 'Subject-wise marks', type: 'object' })
+  @ApiProperty({
+    description: 'Subject-wise marks',
+    type: 'object',
+    additionalProperties: true,
+  })
   @Column({ type: 'jsonb', name: 'subject_marks', nullable: true })
   subjectMarks: Record<string, number>;
 

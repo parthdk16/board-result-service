@@ -46,8 +46,10 @@ export class NotificationProducer {
     try {
       this.logger.log('Connecting to RabbitMQ...');
 
-      this.connection = await amqp.connect(this.rabbitmqUrl);
-      this.channel = await this.connection.createChannel();
+      this.connection = (await amqp.connect(
+        this.rabbitmqUrl,
+      )) as unknown as Connection;
+      this.channel = (await this.connection.createChannel()) as Channel;
       // Declare the queue
       await this.channel.assertQueue(this.queueName, {
         durable: true,

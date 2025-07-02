@@ -5,7 +5,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { ResultController } from './result.controller';
 import { ResultService } from './result.service';
-import { Result } from './entities/result.entity';
+import { Result } from './entities_old/result.entity';
 import { UserServiceClient } from '../user-client/user-service.client';
 
 @Module({

@@ -1,4 +1,4 @@
-// src/result/controllers/student.controller.ts
+// src/students/controllers/student.controller.ts
 import {
   Controller,
   Get,
@@ -11,9 +11,10 @@ import {
   ParseUUIDPipe,
   HttpStatus,
   HttpCode,
+  ValidationPipe,
 } from '@nestjs/common';
 import { StudentService } from '../services/student.service';
-import { CreateStudentDto, UpdateStudentDto } from '../dto/create-student.dto';
+import { CreateStudentDto, UpdateStudentDto } from '../dto/student.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 import { BaseResponseDto } from '../../common/dto/base-response.dto';
 
@@ -23,72 +24,55 @@ export class StudentController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() createStudentDto: CreateStudentDto) {
-    try {
-      const student = await this.studentService.create(createStudentDto);
-      return BaseResponseDto.success('Student created successfully', student);
-    } catch (error) {
-      return BaseResponseDto.error('Failed to create student', error.message);
-    }
+  async create(@Body(ValidationPipe) createStudentDto: CreateStudentDto) {
+    const student = await this.studentService.create(createStudentDto);
+    return BaseResponseDto.success('Student created successfully', student);
   }
 
   @Get()
-  async findAll(@Query() pagination: PaginationDto, @Query() filters: any) {
-    try {
-      const students = await this.studentService.findAll(pagination, filters);
-      return BaseResponseDto.success(
-        'Students retrieved successfully',
-        students,
-      );
-    } catch (error) {
-      return BaseResponseDto.error(
-        'Failed to retrieve students',
-        error.message,
-      );
-    }
+  async findAll(
+    @Query(ValidationPipe) pagination: PaginationDto,
+    @Query() filters: any,
+  ) {
+    const [students, count] = await this.studentService.findAll(
+      pagination,
+      filters,
+    );
+    return BaseResponseDto.success('Students retrieved successfully', {
+      students,
+      count,
+      pagination: {
+        page: Math.floor((pagination.skip ?? 0) / (pagination.limit ?? 10)) + 1,
+        limit: pagination.limit,
+        total: count,
+      },
+    });
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      const student = await this.studentService.findOne(id);
-      return BaseResponseDto.success('Student retrieved successfully', student);
-    } catch (error) {
-      return BaseResponseDto.error('Failed to retrieve student', error.message);
-    }
+    const student = await this.studentService.findOne(id);
+    return BaseResponseDto.success('Student retrieved successfully', student);
   }
 
   @Get('user/:userId')
   async findByUserId(@Param('userId') userId: string) {
-    try {
-      const student = await this.studentService.findByUserId(userId);
-      return BaseResponseDto.success('Student retrieved successfully', student);
-    } catch (error) {
-      return BaseResponseDto.error('Failed to retrieve student', error.message);
-    }
+    const student = await this.studentService.findByUserId(userId);
+    return BaseResponseDto.success('Student retrieved successfully', student);
   }
 
   @Patch(':id')
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateStudentDto: UpdateStudentDto,
+    @Body(ValidationPipe) updateStudentDto: UpdateStudentDto,
   ) {
-    try {
-      const student = await this.studentService.update(id, updateStudentDto);
-      return BaseResponseDto.success('Student updated successfully', student);
-    } catch (error) {
-      return BaseResponseDto.error('Failed to update student', error.message);
-    }
+    const student = await this.studentService.update(id, updateStudentDto);
+    return BaseResponseDto.success('Student updated successfully', student);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ParseUUIDPipe) id: string) {
-    try {
-      await this.studentService.remove(id);
-      return BaseResponseDto.success('Student deleted successfully');
-    } catch (error) {
-      return BaseResponseDto.error('Failed to delete student', error.message);
-    }
+    await this.studentService.remove(id);
   }
 }

@@ -27,7 +27,7 @@ import { QueryResultDto } from './dto/query-result.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
-import { Result } from './entities/result.entity';
+import { Result } from './entities_old/result.entity';
 
 @ApiTags('Results')
 @ApiBearerAuth()

@@ -19,6 +19,11 @@ export class BaseResponseDto<T> {
   }
 
   static error<T>(message: string, error?: any): BaseResponseDto<T> {
-    return new BaseResponseDto(false, message, undefined, error);
+    return new BaseResponseDto(
+      false,
+      message,
+      undefined as unknown as T,
+      error,
+    );
   }
 }

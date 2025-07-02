@@ -1,9 +1,8 @@
-/ src/elrstu / services / student - result.service.ts;
+// src/elrstu / services / student - result.service.ts;
 import {
   Injectable,
   ConflictException,
   NotFoundException,
-  BadRequestException,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { StudentResultRepository } from '../repositories/student-result.repository';
@@ -44,8 +43,8 @@ export class StudentResultService {
       // Create student result
       const studentResult = manager.create(StudentResult, {
         ...createResultDto,
-        examination: { id: createResultDto.examinationId } as any,
-        student: { id: createResultDto.studentId } as any,
+        examination: { id: createResultDto.examinationId },
+        student: { id: createResultDto.studentId },
       });
 
       const savedResult = await manager.save(studentResult);
@@ -68,7 +67,7 @@ export class StudentResultService {
               studentResult: savedResult,
               academicYearSubject: {
                 id: subjectDto.academicYearSubjectId,
-              } as any,
+              },
             });
           },
         );
@@ -96,8 +95,8 @@ export class StudentResultService {
     return new PaginatedResponseDto(
       results,
       total,
-      pagination.page,
-      pagination.limit,
+      pagination.page ?? 1,
+      pagination.limit ?? 10,
     );
   }
 
@@ -134,7 +133,15 @@ export class StudentResultService {
       throw new NotFoundException('Student result not found');
     }
 
-    return await this.studentResultRepository.update(id, updateResultDto);
+    const updatedResult = await this.studentResultRepository.update(
+      id,
+      updateResultDto,
+    );
+    if (!updatedResult) {
+      throw new Error('Failed to update student result');
+    }
+
+    return updatedResult;
   }
 
   async remove(id: string): Promise<void> {

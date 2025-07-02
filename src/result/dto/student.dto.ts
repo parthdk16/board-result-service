@@ -1,5 +1,12 @@
 // src/result/dto/create-student.dto.ts
-import { IsString, IsEmail, IsUUID, IsOptional, IsBoolean, Length } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsUUID,
+  IsOptional,
+  IsBoolean,
+  Length,
+} from 'class-validator';
 
 export class CreateStudentDto {
   @IsString()
