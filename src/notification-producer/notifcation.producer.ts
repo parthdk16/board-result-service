@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as amqp from 'amqplib';
-import { Connection, Channel } from 'amqplib';
+// import { Connection, Channel } from 'amqplib';
 
 export interface ResultNotificationPayload {
   studentId: string;
@@ -18,8 +18,8 @@ export interface ResultNotificationPayload {
 @Injectable()
 export class NotificationProducer {
   private readonly logger = new Logger(NotificationProducer.name);
-  private connection: Connection;
-  private channel: Channel;
+  private connection: any;
+  private channel: any;
   private readonly queueName: string;
   private readonly rabbitmqUrl: string;
 
@@ -46,10 +46,8 @@ export class NotificationProducer {
     try {
       this.logger.log('Connecting to RabbitMQ...');
 
-      this.connection = (await amqp.connect(
-        this.rabbitmqUrl,
-      )) as unknown as Connection;
-      this.channel = (await this.connection.createChannel()) as Channel;
+      this.connection = await amqp.connect(this.rabbitmqUrl);
+      this.channel = await this.connection.createChannel();
       // Declare the queue
       await this.channel.assertQueue(this.queueName, {
         durable: true,

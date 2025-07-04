@@ -55,14 +55,14 @@ export class ClassLevelController {
     });
   }
 
-  @Get('active')
-  async findAllActive() {
-    const classLevels = await this.classLevelService.findAllActive();
-    return BaseResponseDto.success(
-      'Active class levels retrieved successfully',
-      classLevels,
-    );
-  }
+  // @Get('active')
+  // async findAllActive() {
+  //   const classLevels = await this.classLevelService.findAllActive();
+  //   return BaseResponseDto.success(
+  //     'Active class levels retrieved successfully',
+  //     classLevels,
+  //   );
+  // }
 
   @Get('ordered')
   async findAllOrderedByLevel() {

@@ -32,8 +32,8 @@ export class Subject {
   @Column({ type: 'enum', enum: ['PASS', 'FAIL'], default: 'PASS' })
   status: string;
 
-  @ManyToOne(() => Result, (result) => result.subjects, { onDelete: 'CASCADE' })
-  result: Result;
+  // @ManyToOne(() => Result, (result) => result.subjects, { onDelete: 'CASCADE' })
+  // result: Result;
 
   @CreateDateColumn()
   createdAt: Date;

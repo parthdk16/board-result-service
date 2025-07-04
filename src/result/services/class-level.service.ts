@@ -10,7 +10,7 @@ import {
   UpdateClassLevelDto,
 } from '../dto/class-level.dto';
 import { PaginationDto } from '../../common/dto/pagination.dto';
-import { ClassLevel } from '../../database/entities/class-level.entity';
+import { ClassLevel } from '../entities/class-level.entity';
 
 @Injectable()
 export class ClassLevelService {
@@ -88,9 +88,9 @@ export class ClassLevelService {
     return;
   }
 
-  async findAllActive(): Promise<ClassLevel[]> {
-    return await this.classLevelRepository.findAllActive();
-  }
+  // async findAllActive(): Promise<ClassLevel[]> {
+  //   return await this.classLevelRepository.findAllActive();
+  // }
 
   async findAllOrderedByLevel(): Promise<ClassLevel[]> {
     return await this.classLevelRepository.findAllOrderedByLevel();

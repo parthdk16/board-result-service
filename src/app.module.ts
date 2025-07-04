@@ -38,8 +38,6 @@ import { ClassLevelModule } from './result/modules/class-level.module';
 })
 export class AppModule {}
 
-// // app.module.ts
-// import { Module } from '@nestjs/common';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 // import { ConfigModule, ConfigService } from '@nestjs/config';
 // import { ResultModule } from './result/result.module';

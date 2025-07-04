@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, DataSource } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClassLevel } from '../../database/entities/class-level.entity';
+import { ClassLevel } from '../entities/class-level.entity';
 import { PaginationDto } from '../../common/dto/pagination.dto';
 
 @Injectable()
@@ -86,7 +86,7 @@ export class ClassLevelRepository {
     await this.repository
       .createQueryBuilder()
       .update(ClassLevel)
-      .set({updateData})
+      .set(updateData)
       .where('level = :level', { level })
       .execute();
 
@@ -98,16 +98,16 @@ export class ClassLevelRepository {
     return (result.affected ?? 0) > 0;
   }
 
-  async findAllActive(): Promise<ClassLevel[]> {
-    return await this.repository.find({
-      where: { isActive: true },
-      order: { sortOrder: 'ASC', level: 'ASC' },
-    });
-  }
+  // async findAllActive(): Promise<ClassLevel[]> {
+  //   return await this.repository.find({
+  //     where: { isActive: true },
+  //     order: { sortOrder: 'ASC', level: 'ASC' },
+  //   });
+  // }
 
   async findAllOrderedByLevel(): Promise<ClassLevel[]> {
     return await this.repository.find({
-      order: { sortOrder: 'ASC', level: 'ASC' },
+      order: { level: 'ASC' },
     });
   }
 }
